@@ -12,11 +12,37 @@
     
     <div id="result"></div>
     <script>
-        async function some_api(myForm) {
-            // ここにコードを書く
-            document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
-            document.apiform.reset();
+    async function some_api(myForm) {
+        const inputText = myForm.form_data.value;
+
+        document.getElementById("result").innerHTML += `翻訳中: ${inputText}<br />`;
+
+        try {
+            const response = await fetch('https://libretranslate.de/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    q: inputText,
+                    source: 'ja',
+                    target: 'en',
+                    format: 'text'
+                })
+            });
+
+            const data = await response.json();
+
+            document.getElementById("result").innerHTML +=
+                `翻訳結果: ${data.translatedText}<br />`;
+        } catch (error) {
+            document.getElementById("result").innerHTML +=
+                `エラー: ${error.message}<br />`;
         }
-    </script>
+
+        document.apiform.reset();
+    }
+</script>
 </body>
 </html>
+
